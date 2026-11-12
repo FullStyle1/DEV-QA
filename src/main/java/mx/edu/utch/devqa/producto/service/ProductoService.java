@@ -1,9 +1,11 @@
 package mx.edu.utch.devqa.producto.service;
 
 import java.util.List;
-import java.util.NoSuchElementException;
+import mx.edu.utch.devqa.producto.exception.DatoDuplicadoException;
+import mx.edu.utch.devqa.producto.exception.RecursoNoEncontradoException;
 import mx.edu.utch.devqa.producto.model.Producto;
 import mx.edu.utch.devqa.producto.repository.ProductoRepository;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,7 +19,10 @@ public class ProductoService {
 
     public Producto crear(Producto producto) {
         producto.setId(null);
-        return repository.save(producto);
+        if (repository.existsBySku(producto.getSku())) {
+            throw new DatoDuplicadoException("Ya existe un producto con SKU " + producto.getSku());
+        }
+        return guardar(producto);
     }
 
     public List<Producto> listar() {
@@ -30,8 +35,11 @@ public class ProductoService {
 
     public Producto actualizar(String id, Producto producto) {
         buscarPorId(id);
+        if (repository.existsBySkuAndIdNot(producto.getSku(), id)) {
+            throw new DatoDuplicadoException("Ya existe un producto con SKU " + producto.getSku());
+        }
         producto.setId(id);
-        return repository.save(producto);
+        return guardar(producto);
     }
 
     public void eliminar(String id) {
@@ -40,6 +48,14 @@ public class ProductoService {
 
     private Producto buscarPorId(String id) {
         return repository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("No existe el producto con ID " + id));
+                .orElseThrow(() -> new RecursoNoEncontradoException("No existe el producto con ID " + id));
+    }
+
+    private Producto guardar(Producto producto) {
+        try {
+            return repository.save(producto);
+        } catch (DuplicateKeyException exception) {
+            throw new DatoDuplicadoException("Ya existe un producto con SKU " + producto.getSku());
+        }
     }
 }
