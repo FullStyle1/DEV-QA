@@ -3,6 +3,8 @@ package mx.edu.utch.devqa.producto.controller;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
+import mx.edu.utch.devqa.producto.dto.ProductoRequest;
+import mx.edu.utch.devqa.producto.dto.ProductoResponse;
 import mx.edu.utch.devqa.producto.model.Producto;
 import mx.edu.utch.devqa.producto.service.ProductoService;
 import org.springframework.http.ResponseEntity;
@@ -26,29 +28,39 @@ public class ProductoController {
     }
 
     @PostMapping
-    public ResponseEntity<Producto> crear(@Valid @RequestBody Producto producto) {
-        Producto creado = service.crear(producto);
-        return ResponseEntity.created(URI.create("/api/productos/" + creado.getId())).body(creado);
+    public ResponseEntity<ProductoResponse> crear(@Valid @RequestBody ProductoRequest request) {
+        Producto creado = service.crear(toEntity(request));
+        return ResponseEntity.created(URI.create("/api/productos/" + creado.getId())).body(toResponse(creado));
     }
 
     @GetMapping
-    public List<Producto> listar() {
-        return service.listar();
+    public List<ProductoResponse> listar() {
+        return service.listar().stream().map(this::toResponse).toList();
     }
 
     @GetMapping("/{id}")
-    public Producto obtener(@PathVariable String id) {
-        return service.obtener(id);
+    public ProductoResponse obtener(@PathVariable String id) {
+        return toResponse(service.obtener(id));
     }
 
     @PutMapping("/{id}")
-    public Producto actualizar(@PathVariable String id, @Valid @RequestBody Producto producto) {
-        return service.actualizar(id, producto);
+    public ProductoResponse actualizar(@PathVariable String id, @Valid @RequestBody ProductoRequest request) {
+        return toResponse(service.actualizar(id, toEntity(request)));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable String id) {
         service.eliminar(id);
         return ResponseEntity.noContent().build();
+    }
+
+    private Producto toEntity(ProductoRequest request) {
+        return new Producto(null, request.sku(), request.nombre(), request.descripcion(),
+                request.precio(), request.categoria());
+    }
+
+    private ProductoResponse toResponse(Producto producto) {
+        return new ProductoResponse(producto.getId(), producto.getSku(), producto.getNombre(),
+                producto.getDescripcion(), producto.getPrecio(), producto.getCategoria());
     }
 }
