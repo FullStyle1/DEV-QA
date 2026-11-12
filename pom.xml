@@ -20,6 +20,10 @@
         <java.version>21</java.version>
         <springdoc.version>2.8.9</springdoc.version>
         <jacoco.version>0.8.13</jacoco.version>
+        <sonar.projectKey>FullStyle1_DEV-QA</sonar.projectKey>
+        <sonar.projectName>DEV-QA</sonar.projectName>
+        <sonar.host.url>http://localhost:9000</sonar.host.url>
+        <sonar.coverage.jacoco.xmlReportPaths>${project.reporting.outputDirectory}/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
     </properties>
 
     <dependencies>
@@ -97,6 +101,11 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>5.2.0.4988</version>
             </plugin>
         </plugins>
     </build>
