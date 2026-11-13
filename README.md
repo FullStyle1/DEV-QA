@@ -8,14 +8,13 @@ Microservicio REST para administrar productos con Java 21, Spring Boot, MongoDB 
 - Maven 3.9 o posterior
 - Docker Desktop con Docker Compose
 
-## Clonar y seleccionar la version completa
+## Clonar el repositorio
 
-La rama `main` conserva deliberadamente el core inicial. El trabajo integrado de pruebas, JaCoCo y SonarQube se encuentra en `develop`:
+La rama `main` contiene la version completa del microservicio, incluidas las mejoras integradas desde `develop`. Esta ultima se conserva como rama de desarrollo:
 
 ```powershell
 git clone https://github.com/FullStyle1/DEV-QA.git
 Set-Location DEV-QA
-git switch develop
 ```
 
 ## Iniciar MongoDB y la API
@@ -119,8 +118,8 @@ El proyecto usa la clave `FullStyle1_DEV-QA`, configurada en `pom.xml` y `sonar-
 
 ## Ramas de trabajo
 
-- `main`: core inicial del microservicio.
-- `develop`: integracion de las fases completadas.
-- `feat/<nombre-corto>`: cada mejora se desarrolla en una rama desde `develop`, se verifica y luego se integra en `develop`.
+- `main`: version completa y estable del microservicio.
+- `develop`: rama de integracion para las mejoras.
+- `feat/<nombre-corto>`: cada mejora se desarrolla desde `develop`, se verifica y luego se integra en `develop`.
 
-`main` se actualiza al cierre del proyecto, despues de revisar y aprobar la integracion final.
+Las mejoras implementadas en `develop` ya fueron integradas en `main`.
